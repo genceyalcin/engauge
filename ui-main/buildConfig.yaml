@@ -8,4 +8,4 @@ steps:
     dir: '/workspace/ui-main'
     args: ['run', 'build']
   - name: 'gcr.io/cloud-builders/gsutil'
-    args: ['rsync', '-r', 'file:///workspace/ui-main/build', 'gs://engauge-ui-main']
+    args: ['rsync', '-r', 'file:///workspace/ui-main/build', 'gs://engauge.space']
