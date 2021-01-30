@@ -7,8 +7,6 @@ steps:
     entrypoint: npm
     dir: '/workspace/ui-main'
     args: ['run', 'build']
-
-artifacts:
-  objects:
-    location: 'gs://engauge-ui-main/'
-    paths: ['/workspace/ui-main/build']
+  - name: 'gcr.io/cloud-builders/gsutil'
+    dir: 'workspace/ui-main'
+    args: ['rsync', '-r', 'build', 'gs://engauge-ui-main']
