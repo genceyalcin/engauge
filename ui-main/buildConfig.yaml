@@ -4,9 +4,9 @@ steps:
   args: ['install']
 - name: build
   entrypoint: npm
-  args: ['run', 'build']
+  args: ['', 'build']
 
 artifacts:
   objects:
-    location: ["gs://engauge-ui-main/"]
-    paths: ["build"]
+    location: ['gs://engauge-ui-main/']
+    paths: ['build']
