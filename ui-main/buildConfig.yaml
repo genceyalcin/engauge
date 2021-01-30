@@ -1,8 +1,10 @@
 steps:
   - name: node
     entrypoint: npm
+    dir: '/workspace/.git/ui-main'
     args: ['install']
   - name: node
+    dir: '/workspace/.git/ui-main'
     entrypoint: npm
     args: ['run', 'build']
 
