@@ -1,12 +1,11 @@
 steps:
-  - name: node
+  - name: node-install
     dir: '/ui-main'
-    entrypoint: npm
-    args: ['install']
-  - name: node
+    args: ['npm', install']
+  - name: node-build
     entrypoint: npm
     dir: '/ui-main'
-    args: ['run', 'build']
+    args: ['npm', 'run', 'build']
 
 artifacts:
   objects:
