@@ -1,10 +1,10 @@
 steps:
-- name: node
-  entrypoint: npm
+- name: 'node'
+  entrypoint: 'npm'
   args: ['install']
-- name: build
-  entrypoint: npm
-  args: ['', 'build']
+- name: 'node'
+  entrypoint: 'npm'
+  args: ['run', 'build']
 
 artifacts:
   objects:
