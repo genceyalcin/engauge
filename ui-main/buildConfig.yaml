@@ -1,11 +1,18 @@
 steps:
-  - name: node
-    entrypoint: npm
-    dir: '/workspace/ui-main'
-    args: ['install']
-  - name: node
-    entrypoint: npm
-    dir: '/workspace/ui-main'
-    args: ['run', 'build']
-  - name: 'gcr.io/cloud-builders/gsutil'
-    args: ['rsync', '-r', 'file:///workspace/ui-main/build', 'gs://engauge.space']
+    - name: node
+      entrypoint: npm
+      dir: '/workspace/ui-main'
+      args: ['install']
+    - name: node
+      entrypoint: npm
+      dir: '/workspace/ui-main'
+      args: ['run', 'build']
+    - name: 'gcr.io/cloud-builders/gsutil'
+      args:
+          [
+              'rsync',
+              '-d',
+              '-r',
+              'file:///workspace/ui-main/build',
+              'gs://engauge.space'
+          ]
