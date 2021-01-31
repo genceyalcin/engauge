@@ -18,6 +18,10 @@ def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
+@app.route("/", methods=['GET'])
+def healthCheck():
+    return '', 204
+
 #get ip
 @app.route('/get-ip', methods=['GET'])
 def getMyIP():
