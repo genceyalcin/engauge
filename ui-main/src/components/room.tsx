@@ -121,6 +121,22 @@ class Room extends React.Component<RoomProps, RoomState> {
 		console.log('GAUGING...');
 	};
 
+
+	RTCConnection = () => {
+		let configuration = { iceServers: [{
+			urls: [
+				"stun.l.google.com:19302",
+				"stun1.l.google.com:19302",
+				"stun2.l.google.com:19302",
+				"stun3.l.google.com:19302",
+				"stun4.l.google.com:19302",
+				"stun.stunprotocol.org"
+			]
+		}]};
+		let pc = new RTCPeerConnection(configuration);
+		//pc.addTrack()
+	}
+
 	render() {
 		const { userType } = this.state;
 		return (
