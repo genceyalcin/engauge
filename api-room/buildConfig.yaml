@@ -6,6 +6,7 @@ steps:
   - name: alpine
     args: [ 'cat', 'api-room/secrets/gcloud.json' ]
   - name: 'gcr.io/cloud-builders/docker'
+    dir: 'workspace/api-room'
     args: [ 'build', '-t', 'gcr.io/emerald-rhythm-303318/api-room', '.' ]
   - name: 'gcr.io/cloud-builders/docker'
     args: [ 'push', 'gcr.io/emerald-rhythm-303318/api-room' ]
