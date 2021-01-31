@@ -43,7 +43,9 @@ class Login extends React.Component<LoginProps, LoginState> {
 	render() {
 		return (
 			<React.Fragment>
-				<h1>Login {this.state.userType}</h1>
+				<h1 style={{ textTransform: 'capitalize' }}>
+					{this.props.userType} Login
+				</h1>
 				<div>
 					<div className="form-group">
 						<label htmlFor="displayName">Display Name</label>
@@ -80,7 +82,8 @@ class Login extends React.Component<LoginProps, LoginState> {
 						className="btn btn-primary"
 						onClick={this.handleSubmit}
 					>
-						Login
+						{this.props.userType === 'teacher' && 'Create Room'}
+						{this.props.userType === 'student' && 'Join Room'}
 					</button>
 				</div>
 			</React.Fragment>

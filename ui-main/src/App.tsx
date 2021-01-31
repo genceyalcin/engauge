@@ -7,13 +7,14 @@ import {
 } from 'react-router-dom';
 import Home from './components/home';
 import './App.css';
-// import Login from './components/login';
 import Room from './components/room';
+import Header from './components/header';
 
 function App() {
 	return (
 		<React.Fragment>
 			<Router>
+				<Header />
 				<main className="container-fluid">
 					<Switch>
 						<Route path="/home" component={Home} />

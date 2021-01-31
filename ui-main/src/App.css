@@ -1,10 +1,13 @@
-/* Home Page */
 .role-prompt {
 	text-align: center;
 	padding-top: 10rem;
 	padding-bottom: 10rem;
 }
 
+.app-header {
+	background-color: #007bff;
+	text-emphasis-color: white;
+}
 .video-box {
 	border-radius: 15px;
 	background-color: black;
