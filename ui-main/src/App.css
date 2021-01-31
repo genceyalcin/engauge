@@ -8,3 +8,9 @@
 	background-color: #007bff;
 	text-emphasis-color: white;
 }
+.video-box {
+	border-radius: 15px;
+	background-color: black;
+	padding: 0;
+	box-shadow: 2px 2px 10px 10px rgba(0, 0, 0, 0.1);
+}
