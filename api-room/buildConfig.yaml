@@ -1,0 +1,6 @@
+steps:
+  - name: 'gcr.io/cloud-builders/gsutil'
+    args: [ 'cp', '-r', 'gs://engauge-room-api/secret/gcloud.json', 'file:///workspace/api-room']
+  - name: 'gcr.io/cloud-builders/docker'
+    dir: '/workspace/api-room'
+    args: [ 'build', '-t', 'gcr.io/emerald-rhythm-303318/API_ROOM_IMAGE', '.' ]
