@@ -82,7 +82,7 @@ class Room extends React.Component<RoomProps, RoomState> {
 		mixedStream.addTrack(this.state.myVideoStream.getTracks()[0]);
 		
 		console.log('Calling teacher');
-		let call = peer.call(this.state.roomID, mixedStream);
+		let call = peer.call(this.state.roomID, this.state.myVideoStream);
 		call.on('stream', (remoteStream: MediaStream) => {
 			this.setState({
 				remoteStream
