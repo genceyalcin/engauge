@@ -33,7 +33,8 @@ export interface RoomState {
 class Room extends React.Component<RoomProps, RoomState> {
 	
 	public static readonly DOMAIN = 'engauge-api-room-rqh2uw2ppq-uk.a.run.app';
-	
+	public static readonly KEY = 'veryuniquekeythankyouverymuch';
+
 	state = {
 		hostUsername: '',
 		roomName: '',
@@ -75,7 +76,7 @@ class Room extends React.Component<RoomProps, RoomState> {
 
 	handlePeerJSStudent = async () => {
 		console.log('Handling student');
-		let peer = new Peer(`${this.state.displayName}@${this.state.roomID}`);
+		let peer = new Peer(`${this.state.displayName}@${this.state.roomID}`, {key: Room.KEY, secure:true, debug: 3});
 		
 		let mixedStream = new MediaStream();
 		mixedStream.addTrack(this.state.myAudioStream.getTracks()[0]);
@@ -96,7 +97,7 @@ class Room extends React.Component<RoomProps, RoomState> {
 
 	handlePeerJSTeacher = async () => {
 		console.log('Handling teacher');
-		let peer = new Peer(this.state.roomID);
+		let peer = new Peer(this.state.roomID, {key: Room.KEY, secure:true, debug: 3});
 		peer.on('call', (call) => {
 			let mixedStream = new MediaStream();
 			mixedStream.addTrack(this.state.myAudioStream.getTracks()[0]);
