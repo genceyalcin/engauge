@@ -1,4 +1,4 @@
-FROM python:alpine
+FROM python:latest
 WORKDIR /api-room
 COPY ./ ./
 RUN pip install -r requirements.txt
