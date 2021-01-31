@@ -44,10 +44,11 @@ class Room extends React.Component<RoomProps, RoomState> {
 		this.setState({ userType: this.props.match.params.userType });
 	}
 
-	handleLogin = (displayName, roomID) => {
+	handleLogin = (displayName, roomID, roomName) => {
 		this.setState({
 			displayName,
 			roomID,
+			roomName,
 			loggedIn: true
 		});
 		this.handleGetVideo();
@@ -110,6 +111,10 @@ class Room extends React.Component<RoomProps, RoomState> {
 		console.log(error);
 	};
 
+	gaugeReactions = () => {
+		console.log('GAUGING...');
+	};
+
 	render() {
 		const { userType } = this.state;
 		return (
@@ -152,14 +157,24 @@ class Room extends React.Component<RoomProps, RoomState> {
 											? 'Mute'
 											: 'Unmute'}
 									</button>
+									{this.state.userType === 'teacher' && (
+										<button
+											className="btn btn-primary col-12"
+											onClick={this.gaugeReactions}
+										>
+											Gauge Reactions
+										</button>
+									)}
 								</div>
-								<div className="instructor-vid col-12">
-									<h3>{this.state.hostUsername}</h3>
-									<video
-										autoPlay={true}
-										className="col-12 video-box"
-									></video>
-								</div>
+								{this.state.userType === 'student' && (
+									<div className="instructor-vid col-12">
+										<h3>{this.state.hostUsername}</h3>
+										<video
+											autoPlay={true}
+											className="col-12 video-box"
+										></video>
+									</div>
+								)}
 							</div>
 						</div>
 					</div>

@@ -25,19 +25,20 @@ class Login extends React.Component<LoginProps, LoginState> {
 	}
 
 	handleSubmit = () => {
-		const { displayName, roomID } = this.state;
+		let { displayName, roomID, roomName } = this.state;
 		const { userType } = this.props;
 		// const https = require('https');
 
 		// submit to api
 		if (userType === 'student') {
 			// join room
+			roomName = 'Test Room';
 		} else if (userType === 'teacher') {
 			// create room
 		}
 
 		// send info back to room component
-		this.props.handleLogin(displayName, roomID);
+		this.props.handleLogin(displayName, roomID, roomName);
 	};
 
 	handleNameChange = (e) => {
