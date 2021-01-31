@@ -27,9 +27,12 @@ export interface RoomState {
 }
 
 class Room extends React.Component<RoomProps, RoomState> {
+	
+	public static readonly DOMAIN = 'engauge-api-room-rqh2uw2ppq-uk.a.run.app';
+	
 	state = {
-		hostUsername: 'Instructor McGee',
-		roomName: 'Room Name',
+		hostUsername: '',
+		roomName: '',
 		hostUserIp: '',
 		loggedIn: false,
 		userType: '',
@@ -44,7 +47,7 @@ class Room extends React.Component<RoomProps, RoomState> {
 		this.setState({ userType: this.props.match.params.userType });
 	}
 
-	handleLogin = (displayName, roomID, roomName) => {
+	 handleLogin = async (displayName, roomID, roomName) => {
 		this.setState({
 			displayName,
 			roomID,
@@ -134,6 +137,7 @@ class Room extends React.Component<RoomProps, RoomState> {
 							>
 								<div className="col-12">
 									<h1>{this.state.roomName} </h1>
+									<span>{this.state.roomID}</span>
 								</div>
 								<div
 									className="user-vid col-12"

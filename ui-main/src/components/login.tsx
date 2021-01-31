@@ -1,4 +1,5 @@
 import React from 'react';
+import * as https from 'https';
 
 export interface LoginProps {
 	userType: string;
@@ -13,6 +14,9 @@ export interface LoginState {
 }
 
 class Login extends React.Component<LoginProps, LoginState> {
+	
+	public static readonly DOMAIN = 'engauge-api-room-rqh2uw2ppq-uk.a.run.app';
+	
 	state = {
 		userType: '',
 		displayName: '',
@@ -24,17 +28,52 @@ class Login extends React.Component<LoginProps, LoginState> {
 		this.setState({ userType: this.props.userType });
 	}
 
-	handleSubmit = () => {
+	handleSubmit = async () => {
 		let { displayName, roomID, roomName } = this.state;
 		const { userType } = this.props;
-		// const https = require('https');
 
 		// submit to api
 		if (userType === 'student') {
 			// join room
 			roomName = 'Test Room';
 		} else if (userType === 'teacher') {
-			// create room
+			const data = JSON.stringify({
+				host_username: displayName,
+				room_name: roomName 
+			})
+
+			const options = {
+				hostname: Login.DOMAIN,
+				path: `/room`,
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+					'Content-Length': data.length
+				}
+			}
+
+			let roomPromise = new Promise<string>(function(resolve, reject) {
+				let req = https.request(options, (res) => {
+					console.log('Inside');
+					if (res.statusCode !== 200) return reject("Ooops!");
+					console.log('200');
+
+					let body: string = "";
+					
+					res.on('data', function(d) {
+						body += d;
+					})
+
+					res.on('end', function() {
+						return resolve(body);
+					})
+				})
+				
+				req.write(data);
+				req.end();
+			})
+
+			await roomPromise.then(body => roomID = body || "");
 		}
 
 		// send info back to room component
