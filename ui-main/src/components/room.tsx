@@ -1,6 +1,7 @@
 import React from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 import Login from './login';
+import Peer from 'peerjs'
 
 export interface RoomProps extends RouteComponentProps {
 	match: {
@@ -23,13 +24,19 @@ export interface RoomState {
 	roomID: string;
 	myAudioStream: MediaStream;
 	myVideoStream: MediaStream;
+	remoteStream: MediaStream;
 	microphoneOn: boolean;
+	peer: any;
+	call: any;
 }
 
 class Room extends React.Component<RoomProps, RoomState> {
+	
+	public static readonly DOMAIN = 'engauge-api-room-rqh2uw2ppq-uk.a.run.app';
+	
 	state = {
-		hostUsername: 'Instructor McGee',
-		roomName: 'Room Name',
+		hostUsername: '',
+		roomName: '',
 		hostUserIp: '',
 		loggedIn: false,
 		userType: '',
@@ -37,33 +44,85 @@ class Room extends React.Component<RoomProps, RoomState> {
 		roomID: '',
 		microphoneOn: false,
 		myAudioStream: new MediaStream(),
-		myVideoStream: new MediaStream()
+		myVideoStream: new MediaStream(),
+		remoteStream: new MediaStream(),
+		peer: undefined,
+		call: undefined
 	};
 
 	componentDidMount() {
 		this.setState({ userType: this.props.match.params.userType });
 	}
 
-	handleLogin = (displayName, roomID, roomName) => {
+	handleLogin = async (displayName, roomID, roomName, hostIP, hostUsername) => {
 		this.setState({
 			displayName,
 			roomID,
 			roomName,
-			loggedIn: true
+			loggedIn: true,
+			hostUserIp: hostIP || "",
+			hostUsername
 		});
-		this.handleGetVideo();
-		this.handleGetAudio();
+		await this.handleGetVideo();
+		await this.handleGetAudio();
+		if (this.state.userType === 'teacher') {
+			await this.handlePeerJSTeacher();
+		}
+		else {
+			await this.handlePeerJSStudent();
+		}
 	};
 
-	handleGetVideo = () => {
-		navigator.getUserMedia(
+	handlePeerJSStudent = async () => {
+		console.log('Handling student');
+		let peer = new Peer(`${this.state.displayName}@${this.state.roomID}`);
+		
+		let mixedStream = new MediaStream();
+		mixedStream.addTrack(this.state.myAudioStream.getTracks()[0]);
+		mixedStream.addTrack(this.state.myVideoStream.getTracks()[0]);
+		
+		console.log('Calling teacher');
+		let call = peer.call(this.state.roomID, this.state.myVideoStream);
+		call.on('stream', (remoteStream: MediaStream) => {
+			this.setState({
+				remoteStream
+			})
+			let video: any = document.getElementById('instructorVideo');
+			video.srcObject = this.state.remoteStream;
+		})
+
+		this.setState({peer, call});
+	}
+
+	handlePeerJSTeacher = async () => {
+		console.log('Handling teacher');
+		let peer = new Peer(this.state.roomID);
+		peer.on('call', (call) => {
+			let mixedStream = new MediaStream();
+			mixedStream.addTrack(this.state.myAudioStream.getTracks()[0]);
+			mixedStream.addTrack(this.state.myVideoStream.getTracks()[0]);
+
+			console.log('Answering!');
+			call.answer(this.state.myVideoStream);
+			call.on('stream', (remoteStream: MediaStream) => {
+				this.setState({
+					remoteStream
+				})
+				let video: any = document.getElementById('studentVideo');
+				video.srcObject = this.state.remoteStream;
+			})
+
+			this.setState({peer, call})
+		})
+	}	
+
+	handleGetVideo = async () => {
+		let stream = await navigator.mediaDevices.getUserMedia(
 			{
 				video: true,
 				audio: false
-			},
-			this.onGetVideoSuccess,
-			this.onGetVideoFail
-		);
+			});
+		this.onGetVideoSuccess(stream);
 	};
 	onGetVideoSuccess = (stream: MediaStream) => {
 		this.setState({
@@ -72,19 +131,14 @@ class Room extends React.Component<RoomProps, RoomState> {
 		let video: any = document.getElementById('userVideo');
 		video.srcObject = this.state.myVideoStream;
 	};
-	onGetVideoFail = (error: MediaStreamError) => {
-		console.log(error);
-	};
 
-	handleGetAudio = () => {
-		navigator.getUserMedia(
+	handleGetAudio = async () => {
+		let stream = await navigator.mediaDevices.getUserMedia(
 			{
 				video: false,
 				audio: true
-			},
-			this.onGetAudioSuccess,
-			this.onGetAudioFail
-		);
+			});
+		this.onGetAudioSuccess(stream);
 	};
 
 	onGetAudioSuccess = (stream: MediaStream) => {
@@ -107,10 +161,6 @@ class Room extends React.Component<RoomProps, RoomState> {
 		}
 	};
 
-	onGetAudioFail = (error: MediaStreamError) => {
-		console.log(error);
-	};
-
 	gaugeReactions = () => {
 		console.log('GAUGING...');
 	};
@@ -126,7 +176,7 @@ class Room extends React.Component<RoomProps, RoomState> {
 					<div className="container">
 						<div className="row">
 							<div
-								className="col-4"
+								className="col-12"
 								style={{
 									backgroundColor: 'gray',
 									paddingTop: '25px'
@@ -148,8 +198,8 @@ class Room extends React.Component<RoomProps, RoomState> {
 									<button
 										className={
 											this.state.microphoneOn
-												? 'btn btn-danger col-12'
-												: 'btn btn-success col-12'
+												? 'btn btn-success col-12'
+												: 'btn btn-danger col-12'
 										}
 										onClick={this.onToggleMicrophone}
 									>
@@ -172,9 +222,22 @@ class Room extends React.Component<RoomProps, RoomState> {
 										<video
 											autoPlay={true}
 											className="col-12 video-box"
+											id="instructorVideo"
 										></video>
 									</div>
 								)}
+								{this.state.userType === 'teacher' && (
+									<div className="student-vid col-12">
+										<video
+											autoPlay={true}
+											className="col-12 video-box"
+											id="studentVideo"
+										></video>
+									</div>
+								)}
+								<div className="col-12">
+									<span>{"Room ID: " + this.state.roomID}</span>
+								</div>
 							</div>
 						</div>
 					</div>
