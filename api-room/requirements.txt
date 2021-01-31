@@ -1,3 +1,4 @@
 flask
 google-cloud-firestore
 google-cloud-vision
+flask-cors

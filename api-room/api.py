@@ -1,4 +1,5 @@
 from flask import Flask, jsonify, redirect, url_for, request
+from flask_cors import CORS
 import uuid
 import os
 import time
@@ -11,6 +12,7 @@ import firestore
 import faces
 
 app = Flask(__name__)
+CORS(app)
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
 
