@@ -59,39 +59,26 @@ def joinRoom():
 
 @app.route('/gauge', methods=['POST'])
 def gen_gauge():
-    guage_time = str(time.time())
+    gauge_time = str(time.time())
     room_id = request.args.get("room_id")
-    full_guage_dir = os.path.join("/tmp", os.path.join(room_id, guage_time))
-    os.makedirs(full_guage_dir)
-    firestore.make_gauge_doc(room_id, guage_time)
-    return {"guage_time": guage_time}, 200, {'Content-Type': 'application/json'}
+    full_gauge_dir = os.path.join("/tmp", os.path.join(room_id, gauge_time))
+    os.makedirs(full_gauge_dir)
+    firestore.make_gauge_doc(room_id, gauge_time)
+    return {"gauge_time": gauge_time}, 200, {'Content-Type': 'application/json'}
 
 @app.route('/gauge', methods=['PUT'])
 def collect_gauge():
     room_id = request.args.get("room_id")
-    gauge_time = request.args.get("guage_time")
+    gauge_time = request.args.get("gauge_time")
     stu_name = request.args.get("stu_name")
-    full_guage_dir = os.path.join("/tmp", os.path.join(room_id, gauge_time))
+    full_gauge_dir = os.path.join("/tmp", os.path.join(room_id, gauge_time))
     face = request.files['face']
     if face is not None:
         filename = secure_filename(stu_name)
-        face.save(os.path.join(full_guage_dir, filename))
-        firestore.save_gauge(stu_name, faces.detect_faces(os.path.join(full_guage_dir, filename)), room_id, gauge_time)
+        face.save(os.path.join(full_gauge_dir, filename))
+        firestore.save_gauge(stu_name, faces.detect_faces(os.path.join(full_gauge_dir, filename)), room_id, gauge_time)
         return "Big Brother is Watching", 200
     return "No face picture sent."
-    
-
-
-#TESTING CODE NEEDS TO BE REMOVED LATER
-@app.route('/gaugetest', methods=['PUT'])
-def collect_gauge_test():
-    room_id = request.args.get("room_id")
-    gauge_time = request.args.get("gauge_time")
-    stu_name = request.args.get("stu_name")
-    full_guage_dir = os.path.join("/tmp", os.path.join(room_id, gauge_time))
-    firestore.save_gauge(stu_name, {"sorrow": "UNLIKELY", "joy": "LIKELY", "surprise": "LIKELY", "anger": "UNKNOWN"}, room_id, gauge_time)
-    return "Big Brother is Watching", 200
-
 
 
 if __name__ == "__main__":
