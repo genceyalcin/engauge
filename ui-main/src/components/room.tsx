@@ -47,13 +47,16 @@ class Room extends React.Component<RoomProps, RoomState> {
 		this.setState({ userType: this.props.match.params.userType });
 	}
 
-	 handleLogin = async (displayName, roomID, roomName) => {
+	handleLogin = async (displayName, roomID, roomName, hostIP, hostUsername) => {
 		this.setState({
 			displayName,
 			roomID,
 			roomName,
-			loggedIn: true
+			loggedIn: true,
+			hostUserIp: hostIP || "",
+			hostUsername
 		});
+		console.log(this.state.hostUserIp);
 		this.handleGetVideo();
 		this.handleGetAudio();
 	};
@@ -137,7 +140,6 @@ class Room extends React.Component<RoomProps, RoomState> {
 							>
 								<div className="col-12">
 									<h1>{this.state.roomName} </h1>
-									<span>{this.state.roomID}</span>
 								</div>
 								<div
 									className="user-vid col-12"
@@ -179,6 +181,9 @@ class Room extends React.Component<RoomProps, RoomState> {
 										></video>
 									</div>
 								)}
+								<div className="col-12">
+									<span>{"Room ID: " + this.state.roomID}</span>
+								</div>
 							</div>
 						</div>
 					</div>

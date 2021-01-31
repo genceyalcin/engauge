@@ -11,17 +11,21 @@ export interface LoginState {
 	displayName: string;
 	roomID: string;
 	roomName: string;
+	hostIP: string;
+	hostUsername: string;
 }
 
 class Login extends React.Component<LoginProps, LoginState> {
-	
+
 	public static readonly DOMAIN = 'engauge-api-room-rqh2uw2ppq-uk.a.run.app';
 	
 	state = {
 		userType: '',
 		displayName: '',
 		roomID: '',
-		roomName: ''
+		roomName: '',
+		hostIP: '',
+		hostUsername: ''
 	};
 
 	componentDidMount(): void {
@@ -29,34 +33,53 @@ class Login extends React.Component<LoginProps, LoginState> {
 	}
 
 	handleSubmit = async () => {
-		let { displayName, roomID, roomName } = this.state;
+		let { displayName, roomID, roomName, hostIP, hostUsername } = this.state;
 		const { userType } = this.props;
 
 		// submit to api
 		if (userType === 'student') {
-			// join room
-			roomName = 'Test Room';
-		} else if (userType === 'teacher') {
-			const data = JSON.stringify({
-				host_username: displayName,
-				room_name: roomName 
-			})
-
 			const options = {
 				hostname: Login.DOMAIN,
-				path: `/room`,
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-					'Content-Length': data.length
-				}
+				path: `/room?room_id=${roomID}&stu_name=${displayName}`,
+				method: 'PUT'
+			}
+
+			let roomPromise = new Promise<object>(function (resolve, reject) {
+				let req = https.request(options, (res) => {
+					if (res.statusCode !== 200) return reject("Ooops!");
+
+					let body: string = "";
+					
+					res.on('data', function(d) {
+						body += d;
+					})
+
+					res.on('end', function() {
+						return resolve(JSON.parse(body));
+					})
+				})
+				req.end();
+			})
+
+			await roomPromise.then(room => {
+				hostIP = room['host_ip'];
+				hostUsername = room['host_username'];
+				roomName = room['room_name'];
+			})
+
+			// send info back to room component
+			this.props.handleLogin(displayName, roomID, roomName, hostIP, hostUsername);
+			
+		} else if (userType === 'teacher') {
+			const options = {
+				hostname: Login.DOMAIN,
+				path: `/room?host_username=${displayName}&room_name=${roomName}`,
+				method: 'POST'
 			}
 
 			let roomPromise = new Promise<string>(function(resolve, reject) {
 				let req = https.request(options, (res) => {
-					console.log('Inside');
 					if (res.statusCode !== 200) return reject("Ooops!");
-					console.log('200');
 
 					let body: string = "";
 					
@@ -69,15 +92,14 @@ class Login extends React.Component<LoginProps, LoginState> {
 					})
 				})
 				
-				req.write(data);
 				req.end();
 			})
 
 			await roomPromise.then(body => roomID = body || "");
+			
+			// send info back to room component
+			this.props.handleLogin(displayName, roomID, roomName, hostIP, displayName);
 		}
-
-		// send info back to room component
-		this.props.handleLogin(displayName, roomID, roomName);
 	};
 
 	handleNameChange = (e) => {
