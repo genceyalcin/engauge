@@ -9,13 +9,15 @@ export interface LoginState {
 	userType: string;
 	displayName: string;
 	roomID: string;
+	roomName: string;
 }
 
 class Login extends React.Component<LoginProps, LoginState> {
 	state = {
 		userType: '',
 		displayName: '',
-		roomID: ''
+		roomID: '',
+		roomName: ''
 	};
 
 	componentDidMount(): void {
@@ -23,10 +25,16 @@ class Login extends React.Component<LoginProps, LoginState> {
 	}
 
 	handleSubmit = () => {
-		const { userType, displayName, roomID } = this.state;
+		const { displayName, roomID } = this.state;
+		const { userType } = this.props;
+		const https = require('https');
 
 		// submit to api
-		console.log('submitting... ', userType);
+		if (userType === 'student') {
+			// join room
+		} else if (userType === 'teacher') {
+			// create room
+		}
 
 		// send info back to room component
 		this.props.handleLogin(displayName, roomID);
@@ -38,6 +46,10 @@ class Login extends React.Component<LoginProps, LoginState> {
 
 	handleIDChange = (e) => {
 		this.setState({ roomID: e.target.value });
+	};
+
+	handleRoomNameChange = (e) => {
+		this.setState({ roomName: e.target.value });
 	};
 
 	render() {
@@ -78,6 +90,24 @@ class Login extends React.Component<LoginProps, LoginState> {
 							Enter the ID of the room you wish to join
 						</small>
 					</div>
+					{this.props.userType === 'teacher' && (
+						<div className="form-group">
+							<label htmlFor="roomName">Room Name</label>
+							<input
+								type="text"
+								name="roomName"
+								id="roomName"
+								className="form-control"
+								placeholder="Room Name"
+								aria-describedby="roomNameHelp"
+								value={this.state.roomName}
+								onChange={this.handleRoomNameChange}
+							/>
+							<small id="roomNameHelp" className="text-muted">
+								Enter the ID of the room you wish to join
+							</small>
+						</div>
+					)}
 					<button
 						className="btn btn-primary"
 						onClick={this.handleSubmit}
