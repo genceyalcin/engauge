@@ -1,0 +1,16 @@
+steps:
+  - name: 'gcr.io/cloud-builders/gsutil'
+    args: [ 'cp', 'gs://engauge-room-api/secret/gcloud.json', 'file:////workspace/api-room/secret/gcloud.json' ]
+  - name: alpine
+    args: [ 'ls', 'api-room' ]
+  - name: alpine
+    args: [ 'cat', 'api-room/secret/gcloud.json' ]
+  - name: 'gcr.io/cloud-builders/docker'
+    dir: '/workspace/api-room'
+    args: [ 'build', '-t', 'gcr.io/emerald-rhythm-303318/api-room', '.' ]
+  - name: 'gcr.io/cloud-builders/docker'
+    args: [ 'push', 'gcr.io/emerald-rhythm-303318/api-room' ]
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args: ['run', 'deploy', 'engauge-api-room', '--image', 'gcr.io/emerald-rhythm-303318/api-room', '--region', 'us-east4', '--platform', 'managed']
+images: [ 'gcr.io/emerald-rhythm-303318/api-room' ]
