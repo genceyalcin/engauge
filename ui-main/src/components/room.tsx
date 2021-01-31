@@ -2,7 +2,8 @@ import React from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 import Login from './login';
 import * as https from 'https'
-import Peer from 'peerjs'
+import Peer from 'peerjs';
+import FaceData from './faceData';
 
 export interface RoomProps extends RouteComponentProps {
 	match: {
@@ -30,10 +31,23 @@ export interface RoomState {
 	peer: any;
 	call: any;
 	conn: any;
+	displayData: boolean;
+	gaugeData: {
+		students: [
+			{
+				name: string;
+				reactions: {
+					joy: string;
+					surprise: string;
+					sorrow: string;
+					anger: string;
+				};
+			}
+		];
+	} | null;
 }
 
 class Room extends React.Component<RoomProps, RoomState> {
-	
 	public static readonly DOMAIN = 'engauge-api-room-rqh2uw2ppq-uk.a.run.app';
 	public static readonly PEER_HOST = 'emerald-rhythm-303318.uk.r.appspot.com';
 	public static readonly PEER_PATH = '/myapp';
@@ -55,27 +69,34 @@ class Room extends React.Component<RoomProps, RoomState> {
 		peer: undefined,
 		call: undefined,
 		conn: undefined
+		displayData: false,
+		gaugeData: null
 	};
 
 	componentDidMount() {
 		this.setState({ userType: this.props.match.params.userType });
 	}
 
-	handleLogin = async (displayName, roomID, roomName, hostIP, hostUsername) => {
+	handleLogin = async (
+		displayName,
+		roomID,
+		roomName,
+		hostIP,
+		hostUsername
+	) => {
 		this.setState({
 			displayName,
 			roomID,
 			roomName,
 			loggedIn: true,
-			hostUserIp: hostIP || "",
+			hostUserIp: hostIP || '',
 			hostUsername
 		});
 		await this.handleGetVideo();
 		await this.handleGetAudio();
 		if (this.state.userType === 'teacher') {
 			await this.handlePeerJSTeacher();
-		}
-		else {
+		} else {
 			await this.handlePeerJSStudent();
 		}
 	};
@@ -87,16 +108,16 @@ class Room extends React.Component<RoomProps, RoomState> {
 		let mixedStream = new MediaStream();
 		mixedStream.addTrack(this.state.myAudioStream.getTracks()[0]);
 		mixedStream.addTrack(this.state.myVideoStream.getTracks()[0]);
-		
+
 		console.log('Calling teacher');
 		let call = peer.call(this.state.roomID, this.state.myVideoStream);
 		call.on('stream', (remoteStream: MediaStream) => {
 			this.setState({
 				remoteStream
-			})
+			});
 			let video: any = document.getElementById('instructorVideo');
 			video.srcObject = this.state.remoteStream;
-		})
+		});
 
 		// let conn = peer.connect(this.state.roomID);
 		// conn.on('open', () => {
@@ -123,10 +144,10 @@ class Room extends React.Component<RoomProps, RoomState> {
 			call.on('stream', (remoteStream: MediaStream) => {
 				this.setState({
 					remoteStream
-				})
+				});
 				let video: any = document.getElementById('studentVideo');
 				video.srcObject = this.state.remoteStream;
-			})
+			});
 
 			this.setState({call})
 		})
@@ -136,11 +157,10 @@ class Room extends React.Component<RoomProps, RoomState> {
 	}	
 
 	handleGetVideo = async () => {
-		let stream = await navigator.mediaDevices.getUserMedia(
-			{
-				video: true,
-				audio: false
-			});
+		let stream = await navigator.mediaDevices.getUserMedia({
+			video: true,
+			audio: false
+		});
 		this.onGetVideoSuccess(stream);
 	};
 	onGetVideoSuccess = (stream: MediaStream) => {
@@ -152,11 +172,10 @@ class Room extends React.Component<RoomProps, RoomState> {
 	};
 
 	handleGetAudio = async () => {
-		let stream = await navigator.mediaDevices.getUserMedia(
-			{
-				video: false,
-				audio: true
-			});
+		let stream = await navigator.mediaDevices.getUserMedia({
+			video: false,
+			audio: true
+		});
 		this.onGetAudioSuccess(stream);
 	};
 
@@ -286,9 +305,18 @@ class Room extends React.Component<RoomProps, RoomState> {
 									</div>
 								)}
 								<div className="col-12">
-									<span>{"Room ID: " + this.state.roomID}</span>
+									<span>
+										{'Room ID: ' + this.state.roomID}
+									</span>
 								</div>
 							</div>
+							{/* {this.state.displayData && (
+								<div className="col-12">
+									<FaceData
+										gaugeData={this.state.gaugeData}
+									/>
+								</div>
+							)} */}
 						</div>
 					</div>
 				)}
