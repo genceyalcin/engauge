@@ -16,16 +16,15 @@ const About: React.FunctionComponent<AboutProps> = () => {
 				snapshot of student engagement.
 			</p>
 			<h4>The Stack</h4>
-			{/* TODO: FINISH THIS DESCRIPTION */}
 			<p>
 				For this project, we decided to go serverless using Google
 				Cloud's suite of tools. For the back-end, we created a REST API
 				using Flask. The data for this system is stored on Firestore DB.
-			</p>
-			<p>
 				For our front-end, we used ReactJS in combination with NodeJS
 				for scripting, and Bootstrap for formatting. This is then
-				statically hosted in Google Cloud Storage.
+				statically hosted in Google Cloud Storage. Using Cloud Build, we
+				are able to create a CI/CD pipeline to automatically deploy our
+				code to it's respective home whenever we push changes.
 			</p>
 		</div>
 	);
