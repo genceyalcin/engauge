@@ -3,11 +3,15 @@ steps:
     args: [ 'cp', 'gs://engauge-room-api/secret/gcloud.json', 'file:////workspace/api-room/secrets/gcloud.json' ]
   - name: bash
     args: [ 'ls', 'api-room' ]
+  - name: bash
+    args: [ 'cp', '-r', 'api-room', './']
+  - name: bash
+    args: [ 'rm', '-rf', 'ui-main', '&&', 'rm', '-rf', 'sdk-room']
+  - name: bash
+    args: [ 'ls' ]
   - name: 'gcr.io/cloud-builders/docker'
-    dir: '/workspace/api-room'
     args: [ 'build', '-t', 'gcr.io/emerald-rhythm-303318/api-room', '.' ]
   - name: 'gcr.io/cloud-builders/docker'
-    dir: '/workspace/api-room'
     args: [ 'push', 'gcr.io/emerald-rhythm-303318/api-room' ]
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: gcloud
