@@ -68,7 +68,7 @@ class Room extends React.Component<RoomProps, RoomState> {
 		remoteStream: new MediaStream(),
 		peer: undefined,
 		call: undefined,
-		conn: undefined
+		conn: undefined,
 		displayData: false,
 		gaugeData: null
 	};
