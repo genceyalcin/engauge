@@ -2,7 +2,7 @@ steps:
     - name: node
       entrypoint: npm
       dir: '/workspace/ui-main'
-      args: ['install']
+      args: ['install', '--legacy-peer-deps']
     - name: node
       entrypoint: npm
       dir: '/workspace/ui-main'

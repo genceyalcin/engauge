@@ -94,6 +94,11 @@ def collect_gauge():
         return "Big Brother is Watching", 200
     return "No face picture sent."
 
+@app.route('/gauge', methods=['GET'])
+def retrieve_gauge():
+    room_id = request.args.get("room_id")
+    gauge_time = request.args.get("gauge_time")
+    return firestore.get_gauge(room_id, gauge_time)
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 8080)))
