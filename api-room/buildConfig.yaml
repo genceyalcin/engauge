@@ -4,11 +4,7 @@ steps:
   - name: alpine
     args: [ 'ls', 'api-room' ]
   - name: alpine
-    args: [ 'cp', '-r', 'api-room', './']
-  - name: alpine
-    args: [ 'rm', '-rf', 'ui-main', '&&', 'rm', '-rf', 'sdk-room']
-  - name: alpine
-    args: [ 'ls' ]
+    args: [ 'cat', 'api-room/secrets/gcloud.json' ]
   - name: 'gcr.io/cloud-builders/docker'
     args: [ 'build', '-t', 'gcr.io/emerald-rhythm-303318/api-room', '.' ]
   - name: 'gcr.io/cloud-builders/docker'
