@@ -1,46 +1,91 @@
 import React from 'react';
-import { RouteComponentProps } from 'react-router-dom';
 
-export interface LoginProps extends RouteComponentProps {
-    match: {
-        isExact: boolean,
-        path: string,
-        params: {
-            userType: string
-        },
-        url: string
-    }
+export interface LoginProps {
+	userType: string;
+	handleLogin: Function;
 }
- 
+
 export interface LoginState {
-    userType: string,
-    loginInfo: {
-        displayName: string,
-        roomID: string
-    }
+	userType: string;
+	displayName: string;
+	roomID: string;
 }
- 
+
 class Login extends React.Component<LoginProps, LoginState> {
-    state = { 
-        userType: '', 
-        loginInfo: {
-            displayName: '',
-            roomID: ''
-        } 
-    }
+	state = {
+		userType: '',
+		displayName: '',
+		roomID: ''
+	};
 
-    componentDidMount() {
-        this.setState({ userType: this.props.match.params.userType });
-    }
+	componentDidMount(): void {
+		this.setState({ userType: this.props.userType });
+	}
 
-    render() { 
-        return ( 
-            <React.Fragment>
-                <h1>Login {this.state.userType}</h1>
-                <form></form>
-            </React.Fragment> 
-        );
-    }
+	handleSubmit = () => {
+		const { userType, displayName, roomID } = this.state;
+
+		// submit to api
+		console.log('submitting... ', userType);
+
+		// send info back to room component
+		this.props.handleLogin(displayName, roomID);
+	};
+
+	handleNameChange = (e) => {
+		this.setState({ displayName: e.target.value });
+	};
+
+	handleIDChange = (e) => {
+		this.setState({ roomID: e.target.value });
+	};
+
+	render() {
+		return (
+			<React.Fragment>
+				<h1>Login {this.state.userType}</h1>
+				<div>
+					<div className="form-group">
+						<label htmlFor="displayName">Display Name</label>
+						<input
+							type="text"
+							name="displayName"
+							id="displayName"
+							className="form-control"
+							placeholder="Display Name"
+							value={this.state.displayName}
+							onChange={this.handleNameChange}
+						/>
+						<small id="nameHelp" className="text-muted">
+							This is the name other users will see
+						</small>
+					</div>
+					<div className="form-group">
+						<label htmlFor="roomID">Room ID</label>
+						<input
+							type="text"
+							name="roomID"
+							id="roomID"
+							className="form-control"
+							placeholder="Room ID"
+							aria-describedby="roomHelp"
+							value={this.state.roomID}
+							onChange={this.handleIDChange}
+						/>
+						<small id="roomHelp" className="text-muted">
+							Enter the ID of the room you wish to join
+						</small>
+					</div>
+					<button
+						className="btn btn-primary"
+						onClick={this.handleSubmit}
+					>
+						Login
+					</button>
+				</div>
+			</React.Fragment>
+		);
+	}
 }
- 
+
 export default Login;
