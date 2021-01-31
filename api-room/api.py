@@ -1,7 +1,6 @@
 from flask import Flask, jsonify, redirect, url_for, request
 import uuid
 import os
-from PIL import Image
 import time
 from werkzeug.utils import secure_filename
 
