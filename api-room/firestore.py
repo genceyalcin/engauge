@@ -27,9 +27,12 @@ def add_to_room(room_id, stu_name):
 def make_gauge_doc(room_id, gauge_time):
     db.collection(u'rooms').document(room_id).collection(u'gauges').document(gauge_time).set({u'students': []})
 
-def save_gauge(stu_name, reactions, room_id, guage_time):
+def save_gauge(stu_name, reactions, room_id, gauge_time):
     student = {"stu_name": stu_name,
         "reactions": reactions
     }
-    doc = db.collection(u'rooms').document(room_id).collection(u'gauges').document(guage_time).update({u'students': firestore.ArrayUnion([student])})
+    doc = db.collection(u'rooms').document(room_id).collection(u'gauges').document(gauge_time).update({u'students': firestore.ArrayUnion([student])})
 
+def get_gauge(room_id, gauge_time):
+    students = db.collection(u'rooms').document(room_id).collection(u'gauges').document(gauge_time).get().to_dict()
+    return students
