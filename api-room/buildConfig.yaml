@@ -4,3 +4,7 @@ steps:
   - name: 'gcr.io/cloud-builders/docker'
     dir: '/workspace/api-room'
     args: [ 'build', '-t', 'gcr.io/emerald-rhythm-303318/api-room', '.' ]
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args: ['run', 'deploy', 'enguage-api-room', '--image', 'gcr.io/emerald-rhythm-303318/api-room', '--region', 'us-east4', '--platform', 'managed']
+images: [ 'gcr.io/emerald-rhythm-303318/api-room' ]
