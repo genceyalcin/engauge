@@ -14,12 +14,12 @@ function App() {
 	return (
 		<React.Fragment>
 			<Router>
-				<main className="container">
+				<main className="container-fluid">
 					<Switch>
 						<Route path="/home" component={Home} />
 						{/* <Route path="/login/:userType" component={Login}/> */}
 						<Route path="/room/:userType" component={Room} />
-						<Redirect from="/" to="/home" />
+						<Redirect from="/*" to="/home" />
 					</Switch>
 				</main>
 			</Router>
