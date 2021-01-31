@@ -1,6 +1,7 @@
 import React from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 import Login from './login';
+import * as https from 'https'
 import Peer from 'peerjs'
 
 export interface RoomProps extends RouteComponentProps {
@@ -28,12 +29,16 @@ export interface RoomState {
 	microphoneOn: boolean;
 	peer: any;
 	call: any;
+	conn: any;
 }
 
 class Room extends React.Component<RoomProps, RoomState> {
 	
 	public static readonly DOMAIN = 'engauge-api-room-rqh2uw2ppq-uk.a.run.app';
-	public static readonly KEY = 'veryuniquekeythankyouverymuch';
+	public static readonly PEER_HOST = 'emerald-rhythm-303318.uk.r.appspot.com';
+	public static readonly PEER_PATH = '/myapp';
+	public static readonly KEY = 'peerjs';
+	public static readonly OPTIONS = {key: Room.KEY, secure:true, port: 443, debug: 3, path: Room.PEER_PATH, host: Room.PEER_HOST};
 
 	state = {
 		hostUsername: '',
@@ -48,7 +53,8 @@ class Room extends React.Component<RoomProps, RoomState> {
 		myVideoStream: new MediaStream(),
 		remoteStream: new MediaStream(),
 		peer: undefined,
-		call: undefined
+		call: undefined,
+		conn: undefined
 	};
 
 	componentDidMount() {
@@ -76,7 +82,7 @@ class Room extends React.Component<RoomProps, RoomState> {
 
 	handlePeerJSStudent = async () => {
 		console.log('Handling student');
-		let peer = new Peer(`${this.state.displayName}@${this.state.roomID}`, {key: Room.KEY, secure:true, debug: 3});
+		let peer = new Peer(`0@${this.state.roomID}`, Room.OPTIONS);
 		
 		let mixedStream = new MediaStream();
 		mixedStream.addTrack(this.state.myAudioStream.getTracks()[0]);
@@ -92,12 +98,21 @@ class Room extends React.Component<RoomProps, RoomState> {
 			video.srcObject = this.state.remoteStream;
 		})
 
+		// let conn = peer.connect(this.state.roomID);
+		// conn.on('open', () => {
+		// 	conn.on('data', (data) => {
+
+
+		// 		conn.send('request');
+		// 	})
+		// })
+
 		this.setState({peer, call});
 	}
 
 	handlePeerJSTeacher = async () => {
 		console.log('Handling teacher');
-		let peer = new Peer(this.state.roomID, {key: Room.KEY, secure:true, debug: 3});
+		let peer = new Peer(this.state.roomID, Room.OPTIONS);
 		peer.on('call', (call) => {
 			let mixedStream = new MediaStream();
 			mixedStream.addTrack(this.state.myAudioStream.getTracks()[0]);
@@ -113,8 +128,11 @@ class Room extends React.Component<RoomProps, RoomState> {
 				video.srcObject = this.state.remoteStream;
 			})
 
-			this.setState({peer, call})
+			this.setState({call})
 		})
+
+		let conn = peer.connect('0@'+this.state.roomID);
+		this.setState({peer, conn});
 	}	
 
 	handleGetVideo = async () => {
@@ -162,8 +180,39 @@ class Room extends React.Component<RoomProps, RoomState> {
 		}
 	};
 
-	gaugeReactions = () => {
-		console.log('GAUGING...');
+	gaugeReactions = async () => {
+		// if (this.state.conn) {
+		// 	let conn: any = this.state.conn;
+		// 	const options = {
+		// 		hostname: Room.DOMAIN,
+		// 		path: '/gauge?room_id='+this.state.roomID,
+		// 		method: 'POST'
+		// 	}
+
+		// 	let gaugePromise = new Promise<object>(function (resolve, reject) {
+		// 		let req = https.request(options, (res) => {
+		// 			if (res.statusCode !== 200) return reject("Ooops!");
+
+		// 			let body: string = "";
+					
+		// 			res.on('data', function(d) {
+		// 				body += d;
+		// 			})
+
+		// 			res.on('end', function() {
+		// 				return resolve(JSON.parse(body));
+		// 			})
+		// 		})
+		// 		req.end();
+		// 	})
+
+		// 	let gaugeTime = "";
+		// 	await gaugePromise.then(body => gaugeTime = body['gauge_time']);
+
+		// 	conn.on('open', () => {
+		// 		conn.send(gaugeTime);
+		// 	})
+		// }
 	};
 
 	render() {
