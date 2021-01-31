@@ -19,6 +19,15 @@ def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
+#get ip
+@app.route('/get-ip', methods=['GET'])
+def getMyIP():
+    if 'X-Forwarded-For' in request.headers:
+        host_ip = request.headers['X-Forwarded-For'].split(',')[0] # first addr in list is client IP
+    else:
+        host_ip = request.remote_addr
+    return {"ip": host_ip}
+
 #create a room
 @app.route('/room', methods=['POST'])
 def createRoom():
