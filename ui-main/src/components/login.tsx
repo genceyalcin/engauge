@@ -27,7 +27,7 @@ class Login extends React.Component<LoginProps, LoginState> {
 	handleSubmit = () => {
 		const { displayName, roomID } = this.state;
 		const { userType } = this.props;
-		const https = require('https');
+		// const https = require('https');
 
 		// submit to api
 		if (userType === 'student') {
@@ -74,22 +74,24 @@ class Login extends React.Component<LoginProps, LoginState> {
 							This is the name other users will see
 						</small>
 					</div>
-					<div className="form-group">
-						<label htmlFor="roomID">Room ID</label>
-						<input
-							type="text"
-							name="roomID"
-							id="roomID"
-							className="form-control"
-							placeholder="Room ID"
-							aria-describedby="roomHelp"
-							value={this.state.roomID}
-							onChange={this.handleIDChange}
-						/>
-						<small id="roomHelp" className="text-muted">
-							Enter the ID of the room you wish to join
-						</small>
-					</div>
+					{this.props.userType === 'student' && (
+						<div className="form-group">
+							<label htmlFor="roomID">Room ID</label>
+							<input
+								type="text"
+								name="roomID"
+								id="roomID"
+								className="form-control"
+								placeholder="Room ID"
+								aria-describedby="roomHelp"
+								value={this.state.roomID}
+								onChange={this.handleIDChange}
+							/>
+							<small id="roomHelp" className="text-muted">
+								Enter the ID of the room you wish to join
+							</small>
+						</div>
+					)}
 					{this.props.userType === 'teacher' && (
 						<div className="form-group">
 							<label htmlFor="roomName">Room Name</label>
@@ -104,7 +106,7 @@ class Login extends React.Component<LoginProps, LoginState> {
 								onChange={this.handleRoomNameChange}
 							/>
 							<small id="roomNameHelp" className="text-muted">
-								Enter the ID of the room you wish to join
+								Enter a name for the room you're creating
 							</small>
 						</div>
 					)}
